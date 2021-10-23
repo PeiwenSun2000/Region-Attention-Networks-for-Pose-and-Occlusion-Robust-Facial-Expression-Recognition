@@ -28,7 +28,7 @@ video_num 1171
 ```
 
 ## Usage
-Affer all the pre-generated files is done.
+After all the pre-generated files is done.
 
 ```
 python train_attention_rank_loss.py
