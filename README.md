@@ -28,7 +28,13 @@ video_num 1171
 ```
 
 ## Usage
+Affer all the pre-generated files is done.
 
+```
+python train_attention_rank_loss.py
+
+python test_rank_loss_attention.py
+```
 ## To Do
 
 - [ ]  Change variable names that are inconsistent and obscure
