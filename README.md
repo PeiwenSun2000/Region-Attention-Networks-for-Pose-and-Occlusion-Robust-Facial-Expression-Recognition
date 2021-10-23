@@ -31,8 +31,10 @@ video_num 1171
 
 ## To Do
 
-- []  Change variable names that are inconsistent and obscure
+- [ ]  Change variable names that are inconsistent and obscure
 
-- []  Removal of unnecessary intermediate files
+- [ ]  Removal of unnecessary intermediate files
  
-- []  Removal of unnecessary script files and functions
+- [ ]  Removal of unnecessary script files and functions
+
+- [ ]  Implemetation on Affectnet and RAF-DB
