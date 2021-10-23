@@ -44,3 +44,5 @@ python test_rank_loss_attention.py
 - [ ]  Removal of unnecessary script files and functions
 
 - [ ]  Implemetation on Affectnet and RAF-DB
+- [ ]  
+- [ ]  Swich the Backbone. [VGG16 is the caffe model from vggface officially published by vgg to pytorch de-training (with soft label)]
