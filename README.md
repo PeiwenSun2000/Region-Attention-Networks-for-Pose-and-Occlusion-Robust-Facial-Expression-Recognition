@@ -39,9 +39,9 @@ python test_rank_loss_attention.py
 
 - [ ]  Change variable names that are inconsistent and obscure
 
-- [ ]  Removal of unnecessary intermediate files
+- [x]  Removal of unnecessary intermediate files
  
-- [ ]  Removal of unnecessary script files and functions
+- [x]  Removal of unnecessary script files and functions
 
 - [ ]  Implemetation on Affectnet and RAF-DB
 
