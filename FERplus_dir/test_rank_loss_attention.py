@@ -24,6 +24,7 @@ import pdb
 import torch._utils
 import numpy as np
 import time
+import pandas as pd
 os.environ['CUDA_VISIBLE_DEVICES'] = '1'
 try:
     torch._utils._rebuild_tensor_v2
@@ -41,7 +42,7 @@ model_names = sorted(name for name in models.__dict__
     and callable(models.__dict__[name]))
 
 parser = argparse.ArgumentParser(description='PyTorch CelebA Training')
-parser.add_argument('--img_dir_val', metavar='DIR', default='./dataset/FERPlus_reshape_crop_folder/Test', help='path to dataset')
+parser.add_argument('--img_dir_val', metavar='DIR', default='./dataset/FERPlus_reshape_crop_folder/Test/', help='path to dataset')
 parser.add_argument('--arch', '-a', metavar='ARCH', default='resnet18', choices=model_names,
                     help='model architecture: ' +
                         ' | '.join(model_names) +
@@ -62,7 +63,7 @@ parser.add_argument('--weight-decay', '--wd', default=1e-4, type=float,
                     metavar='W', help='weight decay (default: 1e-4)')
 parser.add_argument('--print-freq', '-p', default=10, type=int,
                     metavar='N', help='print frequency (default: 10)')
-parser.add_argument('--resume', default='./model/mytrain/2021-10-20-11:43:56/model_best.pth.tar', type=str, metavar='PATH',
+parser.add_argument('--resume', default='./model/mytrain/2021-10-20-11:43:56/checkpoint_060.pth.tar', type=str, metavar='PATH',
                     help='path to latest checkpoint (default: none)')
 parser.add_argument('-e', '--evaluate', dest='evaluate', action='store_true',
                     help='evaluate model on validation set')
@@ -72,24 +73,25 @@ parser.add_argument('--model_dir','-m', default='./model/mytrain/'+time.strftime
 parser.add_argument('--end2end', default=True,\
         help='if true, using end2end with dream block, else, using naive architecture')
 
+def get_dict_val_data():
+    txt_path = './dataset/FERPlus_test_txts/'
+    df1 = pd.read_csv("./dataset/FERPlus_list/dlib_ferplus_val_center_crop_range_list.txt", sep=' ', header=None)
+    df2 = pd.read_csv("./dataset/FERPlus_list/dlib_ferplus_val_center_crop_range_label.txt", sep=' ', header=None)
+    df_all = pd.merge(df1,df2,left_index=True,right_index=True,how='outer')
+    df_all.columns=['path','num_pics','label']
+    dict_val_data={}
+    for index,row in df_all.iterrows():
+        dict_val_data[row['path']]=[str(row["num_pics"]),str(row["label"])]
+    return dict_val_data
 
-
-
-
-def get_val_data(list_txt,label_txt,frame_num):
-
+def get_val_data(list_txt,dict_data,frame_num):
+    # list_txt是一个不带后缀的文件名
     caffe_crop = CaffeCrop('test')
     # txt_path = '/media/sdc/kwang/ferplus/pose_test/test_txt/'
-    txt_path = './dataset/FERPlus_test_txts/'
-
-
-    val_list_file = txt_path+list_txt
-    val_label_file = txt_path+label_txt
-
 
     # pdb.set_trace()
     # args.img_dir_val,是个路径，val_list_file, val_label_file,这两个文件都要打开的
-    val_dataset =  MsCelebDataset(args.img_dir_val, val_list_file, val_label_file, 
+    val_dataset =  MsCelebDataset(args.img_dir_val,list_txt,dict_data, 
         transforms.Compose([caffe_crop,transforms.ToTensor()]))
     val_loader = torch.utils.data.DataLoader(
         val_dataset,batch_size=frame_num, shuffle=False,num_workers=args.workers, pin_memory=True)
@@ -137,7 +139,9 @@ def main(arch,resume):
     correct = 0
     video_num = 0
     output_task1 = open('ferplus_mn_score.txt','w+')
-        
+    
+    dict_val_data = get_dict_val_data()
+
     for val_nn_file in val_nn_files:
         
         record = val_nn_file.strip().split()
@@ -160,11 +164,11 @@ def main(arch,resume):
         label_txt = ''.join(label_txt)
         #pdb.set_trace()
         # 下面这行源码有
-        # video_name = video_name[0:-4]
+        video_name = video_name[0:-4]
         
         print('video_name',video_name)
         # video_name=fer0032279 0_fer0032241_label.txt frame_num 感觉本地化应该一直是0
-        val_loader = get_val_data(video_name,label_txt,int(frame_num))
+        val_loader = get_val_data(video_name,dict_val_data,int(frame_num))
         
         for i,(input,label) in enumerate(val_loader):
             label = label.numpy()
