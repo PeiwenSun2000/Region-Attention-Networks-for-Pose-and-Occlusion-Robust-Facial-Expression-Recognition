@@ -47,9 +47,9 @@ You can froze the layers as you want from the comment code.
 After all the pre-generated files is done.
 
 ```
-python train_attention_rank_loss.py
+python train.py
 
-python test_rank_loss_attention.py
+python test.py
 ```
 ## To Do
 
