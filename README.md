@@ -46,6 +46,7 @@ You can froze the layers as you want from the comment code.
 ## Usage
 After all the pre-generated files is done.
 
+You need to adjust the batchsize on your own
 ```
 python train.py
 
